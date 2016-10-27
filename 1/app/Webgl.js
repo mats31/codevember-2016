@@ -96,7 +96,7 @@ export default class Webgl {
     const vertices = geometry.vertices;
 
     const total = vertices.length;
-    const size = parseInt( Math.sqrt( total * 3 ));
+    const size = parseInt( Math.sqrt( total * 3 ), 10);
     const data = new Float32Array( size * size * 3 );
 
     for ( let i = 0; i < total; i++ ) {
