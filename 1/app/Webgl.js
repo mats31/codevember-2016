@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import FBO from './class/FBO';
+import Letter from './objects/Letter';
 const glslify = require( 'glslify' );
 const OrbitControls = require( 'three-orbit-controls' )( THREE );
 const OBJLoader = require( './class/OBJLoader' )( THREE );
@@ -11,7 +12,7 @@ export default class Webgl {
     this.scene = new THREE.Scene();
 
     this.camera = new THREE.PerspectiveCamera( 50, width / height, 1, 10000 );
-    this.camera.position.z = 100;
+    this.camera.position.z = 10;
 
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize( width, height );
@@ -23,46 +24,42 @@ export default class Webgl {
 
     this.fbo = false;
 
-    this.type = 'obj'
+    this.word = 'Codevember';
 
-    // this.provideData( 'random' );
-    this.provideData( this.type );
-    // this.provideData( 'obj' );
+    this.loadFont();
+
   }
 
-  provideData( type ) {
+  loadFont() {
+    const loader = new THREE.FontLoader();
+
+    loader.load( 'fonts/gotham.json', ( font ) => {
+
+      this.letter = new Letter({
+        font,
+        text: this.word[0],
+      });
+
+      this.provideData( this.letter.geometry );
+    });
+  }
+
+  provideData( geometry ) {
     const width = 256;
     const height = 256;
 
-    let data = {};
+    // const TextGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+    // const geometry = new THREE.BoxGeometry(10,10,10,10);
+    // const geometry = new THREE.BoxBufferGeometry(10,10,10);
 
-    if ( type === 'image' ) {
-      const img = new Image();
-
-      img.onload = () => {
-        data = this.getImage( img, img.width, img.height, 100 );
-        this.createFBO( data, width, height );
-      };
-
-      img.src = 'img/test.jpg';
-    } else if ( type === 'random' ) {
-      data = this.getRandomData( width, height, 256 );
-      this.createFBO( data, width, height );
-    } else if ( type === 'obj' ) {
-      const loader = new THREE.OBJLoader();
-
-      loader.load(
-          'obj/test.obj',
-          ( obj ) => {
-            data = this.parseMesh( obj );
-            this.createFBO( data, width, height );
-          }
-      );
-    }
+    const data = this.parseGeometry( geometry );
+    this.createFBO( data, width, height );
   }
 
   createFBO( data, width, height ) {
-    const positions = new THREE.DataTexture( data, width, height, THREE.RGBFormat, THREE.FloatType );
+    const size = Math.sqrt( data.length / 3 );
+    // console.log(size)
+    const positions = new THREE.DataTexture( data, size, size, THREE.RGBFormat, THREE.FloatType );
     positions.needsUpdate = true;
 
     // simulation shader used to update the particles' positions
@@ -87,106 +84,26 @@ export default class Webgl {
     });
 
     // init the FBO
-    this.fbo = new FBO( width, height, this.renderer, simulationShader, renderShader );
+    this.fbo = new FBO( size, size, this.renderer, simulationShader, renderShader );
     this.scene.add( this.fbo.particles );
 
-    if (this.type = 'obj') this.fbo.particles.position.z += 30;
+    // if ( this.type === 'obj' ) this.fbo.particles.position.z += 30;
   }
 
-  getRandomData( width, height, size ) {
-    let len = width * height * 3;
-    const data = new Float32Array( len );
+  parseGeometry( geometry ) {
 
-    while ( len-- )data[len] = ( Math.random() * 2 - 1 ) * size;
-
-    return data;
-  }
-
-  getImage( img, width, height, elevation ) {
-
-    const canvas = document.createElement( 'canvas' );
-    canvas.width = width;
-    canvas.height = height;
-
-    const ctx = canvas.getContext( '2d' );
-    ctx.drawImage( img, 0, 0 );
-
-    const imgData = ctx.getImageData( 0, 0, width, height );
-    const iData = imgData.data;
-
-    const l = ( width * height );
-    const data = new Float32Array( l * 3 );
-    for ( let i = 0; i < l; i++ ) {
-      const i3 = i * 3;
-      const i4 = i * 4;
-      data[i3] = ( ( i % width ) / width - 0.5 ) * width;
-      data[i3 + 1] = ( iData[i4] / 0xFF * 0.299 + iData[i4 + 1] / 0xFF * 0.587 + iData[i4 + 2] / 0xFF * 0.114 ) * elevation;
-      data[i3 + 2] = ( ( i / width ) / height - 0.5 ) * height;
-    }
-
-    return data;
-  }
-
-  parseMesh( obj ) {
-
-    const vertices = [];
-
-    obj.traverse( ( child ) => {
-
-      if ( child instanceof THREE.Mesh ) {
-        const meshVertices = child.geometry.attributes.position.array;
-
-        for ( let i = 0; i < meshVertices.length; i++ ) {
-          vertices.push( meshVertices[i]);
-        }
-      } else {
-        child.traverse( ( nextChild ) => {
-          if ( child instanceof THREE.Mesh ) {
-            const meshVertices = nextChild.geometry.attributes.position.array;
-
-            for ( let i = 0; i < meshVertices.length; i++ ) {
-              vertices.push( meshVertices[i]);
-            }
-          } else {
-            nextChild.traverse( ( newChild ) => {
-              if ( newChild instanceof THREE.Mesh ) {
-                const meshVertices = newChild.geometry.attributes.position.array;
-
-                for ( let i = 0; i < meshVertices.length; i++ ) {
-                  vertices.push( meshVertices[i]);
-                }
-              } else {
-                newChild.traverse( ( lastChild ) => {
-                  if ( lastChild instanceof THREE.Mesh ) {
-                    const meshVertices = lastChild.geometry.attributes.position.array;
-
-                    for ( let i = 0; i < meshVertices.length; i++ ) {
-                      vertices.push( meshVertices[i]);
-                    }
-                  }
-                });
-              }
-            });
-          }
-        });
-      }
-    });
+    // const vertices = geometry.attributes.position.array;
+    const vertices = geometry.vertices;
 
     const total = vertices.length;
-    const size = parseInt( Math.sqrt( total * 3 ), 10 );
+    const size = parseInt( Math.sqrt( total * 3 ));
     const data = new Float32Array( size * size * 3 );
 
-    for ( let i = 0; i < total; i += 3 ) {
-      data[i] = vertices[i];
-      data[i + 1] = vertices[i + 1];
-      data[i + 2] = vertices[i + 2];
-
-    //   if (vertices[i] === 0) console.log(0);
-    //   if (vertices[i+1] === 0) console.log(1);
-    //   if (vertices[i+2] === 0) console.log(2);
+    for ( let i = 0; i < total; i++ ) {
+      data[i * 3] = vertices[i].x;
+      data[i * 3 + 1] = vertices[i].y;
+      data[i * 3 + 2] = vertices[i].z;
     }
-
-    // console.log(data);
 
     return data;
   }
