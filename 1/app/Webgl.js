@@ -26,40 +26,55 @@ export default class Webgl {
 
     this.word = 'Codevember';
 
-    this.loadFont();
-
+    this.provideData();
   }
 
-  loadFont() {
-    const loader = new THREE.FontLoader();
+  provideData() {
+    const image = new Image();
 
-    loader.load( 'fonts/gotham.json', ( font ) => {
+    image.onload = () => {
 
-      this.letter = new Letter({
-        font,
-        text: this.word[0],
-      });
+      // const width = window.innerWidth;
+      // const height = window.innerHeight;
+      const width = 256;
+      const height = 256;
 
-      this.provideData( this.letter.geometry );
-    });
+      const data = this.getImage( image, width, height, 30 );
+      this.createFBO( data, width, height );
+    };
+
+    image.src = 'img/c.jpg';
   }
 
-  provideData( geometry ) {
-    const width = 256;
-    const height = 256;
+  getImage( img, width, height, elevation ) {
+    const canvas = document.createElement( 'canvas' );
 
-    // const TextGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
-    // const geometry = new THREE.BoxGeometry(10,10,10,10);
-    // const geometry = new THREE.BoxBufferGeometry(10,10,10);
+    canvas.width = width;
+    canvas.height = height;
 
-    const data = this.parseGeometry( geometry );
-    this.createFBO( data, width, height );
+    const ctx = canvas.getContext( '2d' );
+    ctx.drawImage( img, 0, 0 );
+
+    const imgData = ctx.getImageData( 0, 0, width, height );
+    const iData = imgData.data;
+
+    const l = ( width * height );
+    const data = new Float32Array( l * 3 );
+    for ( let i = 0; i < l; i++ ) {
+      const i3 = i * 3;
+      const i4 = i * 4;
+      data[i3] = ( ( i % width ) / width - 0.5 ) * width;
+      // data[i3] = Math.random() * window.innerWidth - window.innerWidth / 2;
+      data[i3 + 1] = ( iData[i4] / 0xFF * 0.299 + iData[i4 + 1] / 0xFF * 0.587 + iData[i4 + 2] / 0xFF * 0.114 ) * elevation * -1;
+      data[i3 + 2] = ( ( i / width ) / height - 0.5 ) * height;
+      // data[i3 + 2] = Math.random() * window.innerHeight - window.innerHeight / 2;
+    }
+
+    return data;
   }
 
   createFBO( data, width, height ) {
-    const size = Math.sqrt( data.length / 3 );
-    // console.log(size)
-    const positions = new THREE.DataTexture( data, size, size, THREE.RGBFormat, THREE.FloatType );
+    const positions = new THREE.DataTexture( data, width, height, THREE.RGBFormat, THREE.FloatType );
     positions.needsUpdate = true;
 
     // simulation shader used to update the particles' positions
@@ -84,7 +99,8 @@ export default class Webgl {
     });
 
     // init the FBO
-    this.fbo = new FBO( size, size, this.renderer, simulationShader, renderShader );
+    this.fbo = new FBO( width, height, this.renderer, simulationShader, renderShader );
+    this.fbo.particles.rotation.x = Math.PI / 2;
     this.scene.add( this.fbo.particles );
 
     // if ( this.type === 'obj' ) this.fbo.particles.position.z += 30;
