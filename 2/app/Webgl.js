@@ -149,7 +149,7 @@ export default class Webgl {
 
   render() {
     if (this.simulationShader) this.simulationShader.uniforms.time.value = this.clock.getElapsedTime();
-    // if (this.renderShader) this.renderShader.uniforms.time.value = this.clock.getElapsedTime();
+    if (this.renderShader) this.renderShader.uniforms.time.value = this.clock.getElapsedTime();
 
     if ( this.fbo ) {
       this.fbo.update();
