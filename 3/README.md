@@ -1,9 +1,9 @@
 03 - Texture Morphing
 ===================
 
-![alt tag](http://www.mathis-biabiany.fr/lab/codevember-2016/2/img/github.png)
+![alt tag](http://www.mathis-biabiany.fr/lab/codevember-2016/3/img/github.png)
 
-See the demo [here](http://www.mathis-biabiany.fr/lab/codevember-2016/2).
+See the demo [here](http://www.mathis-biabiany.fr/lab/codevember-2016/3).
 
 After cloning install all dependencies :
 ```bash
