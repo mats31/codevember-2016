@@ -19,7 +19,7 @@ export default class Webgl {
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setSize( width, height );
     this.renderer.setClearColor( 0x262626 );
-    // 
+
     // this.controls = new OrbitControls( this.camera );
     // this.controls.minDistance = 500;
     // this.controls.maxDistance = 2000;
