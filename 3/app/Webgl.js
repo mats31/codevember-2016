@@ -20,9 +20,9 @@ export default class Webgl {
     this.renderer.setSize( width, height );
     this.renderer.setClearColor( 0x262626 );
 
-    this.controls = new OrbitControls( this.camera );
-    this.controls.minDistance = 500;
-    this.controls.maxDistance = 2000;
+    // this.controls = new OrbitControls( this.camera );
+    // this.controls.minDistance = 500;
+    // this.controls.maxDistance = 2000;
 
     this.composer = null;
 
@@ -152,7 +152,7 @@ export default class Webgl {
     this.renderShader = new THREE.ShaderMaterial({
       uniforms: {
         positions: { type: 't', value: null },
-        pointSize: { type: 'f', value: 0.1 },
+        pointSize: { type: 'f', value: 1 },
         resolution: { type: 'v2', value: new THREE.Vector2( 256, 256 ) },
         time: { type: 'f', value: 0 },
       },
