@@ -1,7 +1,7 @@
 02 - Color distortion
 ===================
 
-![alt tag](http://www.mathis-biabiany.fr/lab/codevember-2016/2/img/github.png)
+![alt tag](http://www.mathis-biabiany.fr/lab/codevember-2016/2/img/github.jpg)
 
 See the demo [here](http://www.mathis-biabiany.fr/lab/codevember-2016/2).
 
