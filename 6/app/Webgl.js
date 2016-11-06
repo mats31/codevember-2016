@@ -178,6 +178,9 @@ export default class Webgl {
     this.camera.updateProjectionMatrix();
 
     this.renderer.setSize( width, height );
+
+    this.canvas.width = width;
+    this.canvas.height = height;
   }
 
   updateMouse( e ) {
