@@ -103,10 +103,10 @@ export default class Webgl {
 
       data[i4] = ( ( ( i % width ) / width - 0.5 ) * width ) /* * Math.sin( this.time * Math.random() * 0.1 ); */
       // data[i3] = Math.random() * window.innerWidth - window.innerWidth / 2;
-      data[i4 + 1] = ( iData[i4] / 0xFF * 0.299 + iData[i4 + 1] / 0xFF * 0.587 + iData[i4 + 2] / 0xFF * 0.114  ) + ( Math.random() * 200 - 100 );
+      data[i4 + 1] = Math.random();
       // data[i4 + 1] = ( ( ( i % height ) / height - 0.5 ) * height ) * Math.sin( this.time * Math.random() * 0.1 );
       data[i4 + 2] = ( ( ( i / width ) / height - 0.5 ) * height ) /* * Math.sin( this.time * Math.random() * 0.1 ); */
-      data[i4 + 3] = Math.min( 1, iData[i4]);
+      data[i4 + 3] = iData[i4] > 0 ? 0.3 : 1;
       // data[i3 + 2] = Math.random() * window.innerHeight - window.innerHeight / 2;
     }
 
@@ -199,8 +199,8 @@ export default class Webgl {
     }
 
     if ( this.fbo ) {
-      this.simulationShader.uniforms.map.value.image.data = this.getImage(this.canvas.width, this.canvas.height, this.elevation);
-      this.simulationShader.uniforms.map.value.needsUpdate = true;
+    //   this.simulationShader.uniforms.map.value.image.data = this.getImage(this.canvas.width, this.canvas.height, this.elevation);
+    //   this.simulationShader.uniforms.map.value.needsUpdate = true;
       this.fbo.update();
       this.renderer.render( this.scene, this.camera );
     }
