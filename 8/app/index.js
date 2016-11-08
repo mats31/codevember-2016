@@ -8,7 +8,7 @@ let gui;
 
 // webgl settings
 webgl = new Webgl( window.innerWidth, window.innerHeight );
-// document.body.appendChild( webgl.renderer.domElement );
+document.body.appendChild( webgl.renderer.domElement );
 
 // GUI settings
 gui = new dat.GUI();

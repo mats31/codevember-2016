@@ -43,7 +43,7 @@ export default class Webgl {
     this.step = 0;
 
     this.createCanvas();
-    // this.provideData();
+    this.provideData();
   }
 
   createCanvas() {
@@ -53,20 +53,35 @@ export default class Webgl {
     this.canvas.width = 800;
     this.context = this.canvas.getContext('2d');
 
-    document.body.appendChild(this.canvas);
+    // document.body.appendChild(this.canvas);
+
+    this.lines = [
+      {
+        x: this.canvas.width,
+        y: 0,
+      },
+      {
+        x: this.canvas.width / 2,
+        y: this.canvas.height,
+      },
+      {
+        x: 0,
+        y: 0,
+      },
+    ];
 
     this.context.beginPath();
-    this.context.moveTo(10, 10);
-    this.context.lineTo(50, 10);
-    this.context.lineTo(30, 40);
-    this.context.lineTo(10, 10);
-    this.context.strokeStyle = 'red';
-    this.context.lineWidth = 2;
-    this.context.stroke();
+    this.context.moveTo(0, 0);
+    for (let i = 0; i < this.lines.length; i++) {
+      this.context.lineTo(this.lines[i].x, this.lines[i].y);
+    }
+    this.context.fillStyle = 'white';
+    this.context.lineWidth = 1;
+    this.context.fill();
 
-    setInterval( () => {
-      this.step++;
-    }, 2000);
+    // setInterval( () => {
+    //   this.step++;
+    // }, 2000);
   }
 
   provideData() {
@@ -176,32 +191,32 @@ export default class Webgl {
 
   render() {
 
-    // this.time = this.clock.getElapsedTime();
-    //
-    // if (this.simulationShader) {
-    //   this.simulationShader.uniforms.time.value = this.time;
-    //   this.renderShader.uniforms.time.value = this.time;
-    // }
-    //
-    // if ( this.fbo ) {
-    //   this.simulationShader.uniforms.map.value.image.data = this.getImage(this.canvas.width, this.canvas.height, this.elevation);
-    //   this.simulationShader.uniforms.map.value.needsUpdate = true;
-    //   this.fbo.update();
-    //   this.renderer.render( this.scene, this.camera );
-    // }
-    //
-    this.draw();
+    this.time = this.clock.getElapsedTime();
+
+    if (this.simulationShader) {
+      this.simulationShader.uniforms.time.value = this.time;
+      this.renderShader.uniforms.time.value = this.time;
+    }
+
+    if ( this.fbo ) {
+      this.simulationShader.uniforms.map.value.image.data = this.getImage(this.canvas.width, this.canvas.height, this.elevation);
+      this.simulationShader.uniforms.map.value.needsUpdate = true;
+      this.fbo.update();
+      this.renderer.render( this.scene, this.camera );
+    }
+
+    // this.draw();
   }
 
   draw() {
 
-    this.context.beginPath();
-    this.context.moveTo(10, 10);
-    this.context.lineTo(50, 10);
-    this.context.lineTo(30, 40);
-    this.context.lineTo(10, 10);
-    this.context.strokeStyle = 'red';
-    this.context.lineWidth = 2;
-    this.context.stroke();
+    // this.context.beginPath();
+    // this.context.moveTo(10, 10);
+    // this.context.lineTo(50, 10);
+    // this.context.lineTo(30, 40);
+    // this.context.lineTo(10, 10);
+    // this.context.strokeStyle = 'red';
+    // this.context.lineWidth = 2;
+    // this.context.stroke();
   }
 }

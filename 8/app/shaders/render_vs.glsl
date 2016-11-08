@@ -10,8 +10,8 @@ void main() {
     //the mesh is a nomrliazed square so the uvs = the xy positions of the vertices
     vec4 pos = texture2D( positions, position.xy );
     customPos = pos;
-    // pos.x *= sin(time);
-    // pos.y *= sin(time);
+    pos.x *= sin(time);
+    pos.y *= cos(time);
     //pos now contains a 3D position in space, we can use it as a regular vertex
 
     //regular projection of our position
