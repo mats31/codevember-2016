@@ -127,24 +127,15 @@ export default class Webgl {
       // data[i4] = ( ( ( i % width ) / width - 0.5 ) * width ) /* * Math.sin( this.time * Math.random() * 0.1 ); */
       data[i4] = ( ( ( i % width ) / width - 0.5 ) * width ) /* * Math.sin( this.time * Math.random() * 0.1 ); */
       // data[i3] = Math.random() * window.innerWidth - window.innerWidth / 2;
-      data[i4 + 1] = Math.max( 0.1, ( iData[i4] + iData[i4 + 1] + iData[i4 + 2] ) / 765 );
+      data[i4 + 1] = iData[i4] + iData[i4 + 1] + iData[i4 + 2];
       // data[i4 + 1] = ( ( ( i % width ) / width - 0.5 ) * width );
       // data[i4 + 1] = ( ( ( i % height ) / height - 0.5 ) * height ) * Math.sin( this.time * Math.random() * 0.1 );
       data[i4 + 2] = ( ( ( i / width ) / height - 0.5 ) * height ) /* * Math.sin( this.time * Math.random() * 0.1 ); */
-      data[i4 + 3] = iData[i4] / 255 + 1;
+      // data[i4 + 3] = Math.random();
+      data[i4 + 3] = 1;
       // data[i3 + 3] = Math.max( 0.1, ( iData[i4] + iData[i4 + 1] + iData[i4 + 2] ) / 765 );
       // data[i3 + 2] = Math.random() * window.innerHeight - window.innerHeight / 2;
     }
-
-    // for ( let i = 0; i < l; i+=4 ) {
-    //   console.log(iData[i] / 255);
-    // }
-
-    for (var i = 0; i < data.length; i += 3) {
-      // console.log(data[i]);
-    }
-
-
 
     return data;
   }
@@ -179,15 +170,6 @@ export default class Webgl {
       vertexShader: glslify( './shaders/render_vs' ),
       fragmentShader: glslify( './shaders/render_fs' ),
     });
-
-    setTimeout( () => {
-      const geom = new THREE.MeshBasicMaterial({ map: this.renderShader.uniforms.positions.value})
-      const plane = new THREE.PlaneGeometry(500, 500, 100);
-      const mesh = new THREE.Mesh(plane, geom);
-      mesh.position.z = 1500;
-
-      this.scene.add( mesh );
-    }, 2000);
 
     // init the FBO
     this.fbo = new FBO( width, height, this.renderer, this.simulationShader, this.renderShader );

@@ -1,8 +1,7 @@
 uniform float time;
 uniform sampler2D positions;//RenderTarget containing the transformed positions
 
-varying vec4 customPos;
-varying vec3 customPos2;
+varying vec3 fragPos;
 
 float rand(vec2 co){
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
@@ -10,9 +9,12 @@ float rand(vec2 co){
 
 void main()
 {
-    vec4 pos = texture2D( positions, customPos2.xy );
+    vec4 pos = texture2D( positions, fragPos.xy );
 
-    gl_FragColor = vec4( vec3(pos.b),1.);
+    float test = pos.y / 765.;
+    test = floor(test);
+
+    gl_FragColor = vec4( vec3(test), 1.);
     // gl_FragColor = vec4( vec3(pos.w),1.);
     // gl_FragColor = vec4( vec3(pos.y / 100.), pos.a );
     // gl_FragColor = vec4( vec3(1. * customPos.y / 20. ), abs( 1. * customPos.y) );

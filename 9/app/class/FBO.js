@@ -42,16 +42,20 @@ export default class FBO {
         //create a vertex buffer of size width * height with normalized coordinates
         var l = (width * height );
         var vertices = new Float32Array( l * 3 );
+        var velocities = new Float32Array( l );
         for ( var i = 0; i < l; i++ ) {
 
             var i3 = i * 3;
             vertices[ i3 ] = ( i % width ) / width ;
             vertices[ i3 + 1 ] = ( i / width ) / height;
+
+            velocities[i] = Math.random();
         }
 
         //create the particles geometry
         var geometry = new THREE.BufferGeometry();
         geometry.addAttribute( 'position',  new THREE.BufferAttribute( vertices, 3 ) );
+        geometry.addAttribute( 'velocity',  new THREE.BufferAttribute( velocities, 1 ) );
 
         //the rendermaterial is used to render the particles
         this.particles = new THREE.Points( geometry, renderMaterial );
